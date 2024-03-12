@@ -35,7 +35,7 @@ public class MerchantController {
 	@PostMapping("/register")
 	public ResponseEntity<MerchantDTO> registerMerchant(@Valid @RequestBody MerchantDTO merchantDTO){
 		return new ResponseEntity<>(merchantService.registerUser(merchantDTO), HttpStatus.CREATED);
-	}
+	}	
 	
 	@GetMapping("/get-merchant/{id}")
 	public ResponseEntity<MerchantDTO> getCustomerById(@PathVariable String id) {

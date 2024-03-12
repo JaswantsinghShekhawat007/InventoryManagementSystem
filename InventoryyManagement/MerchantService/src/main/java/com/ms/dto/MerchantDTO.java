@@ -30,8 +30,5 @@ public class MerchantDTO {
 	private Address address;
 	
 	transient private List<Product> products;
-	
-	transient private String email;
-	
-	transient private String password;
+
 }
