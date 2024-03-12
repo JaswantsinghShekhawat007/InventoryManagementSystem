@@ -1,7 +1,7 @@
 package com.auth.dto;
 
-import com.auth.entity.Admin;
-import com.auth.entity.Merchant;
+import com.auth.pojo.Admin;
+import com.auth.pojo.Merchant;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
