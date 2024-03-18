@@ -11,13 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Address {
 	
-	private Integer addressId;
-	
 	private String doorNo;
 	private String area;
 	private String city;
 	private String state;
-	private int pincode;
+	private String pincode;
 	
     Merchant merchant;
 	

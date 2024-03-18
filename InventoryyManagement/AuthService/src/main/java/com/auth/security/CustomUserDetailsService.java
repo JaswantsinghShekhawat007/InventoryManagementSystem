@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.auth.entity.Auth;
+import com.auth.exceptions.UserNotFoundException;
 import com.auth.repository.AuthRepository;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String userIdOrEmail) throws UsernameNotFoundException {
 		
 		Auth user = authRepository.findByUserIdOrEmail(userIdOrEmail, userIdOrEmail)
-				.orElseThrow(() ->  new RuntimeException( "User does not Exist" ));
+				.orElseThrow(() ->  new UserNotFoundException("User with "+ userIdOrEmail +" does not Exist"));
 				
 		 Set<GrantedAuthority> authorities = user.getRoles().stream()
 	                .map((role) -> new SimpleGrantedAuthority(role.getName()))

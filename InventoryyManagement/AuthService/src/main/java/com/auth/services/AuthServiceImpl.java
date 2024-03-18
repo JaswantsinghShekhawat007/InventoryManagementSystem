@@ -17,6 +17,8 @@ import com.auth.dto.JwtAuthResponse;
 import com.auth.dto.LoginDTO;
 import com.auth.entity.Auth;
 import com.auth.entity.Roles;
+import com.auth.exceptions.UserAlreadyExistException;
+import com.auth.exceptions.UserNotFoundException;
 import com.auth.externalservices.AdminClient;
 import com.auth.externalservices.MerchantClient;
 import com.auth.pojo.Admin;
@@ -80,11 +82,12 @@ public class AuthServiceImpl implements AuthService{
 		
 		//Checking if UserId Already present
 		if(authRepository.existsById(authDTO.getUserId())) {
-			throw new RuntimeException("User with id "+authDTO.getUserId()+" already present");
+			throw new UserAlreadyExistException("User with Id: "+authDTO.getUserId()+" already present");
 		}
 		
+		//Checking if Email Already present
 		 if(authRepository.existsByEmail(authDTO.getEmail())){
-			 throw new RuntimeException("Email Id Already Present");
+			 throw new UserAlreadyExistException("User with Email Id: "+ authDTO.getEmail() +" already Exists");
 		 }
 		
 		Merchant merchant = authDTO.getMerchant();
@@ -114,11 +117,11 @@ public class AuthServiceImpl implements AuthService{
 	public AuthDTO addAdminAuth(AuthDTO authDTO) {
 		//Checking if UserId Already present
 		if(authRepository.existsById(authDTO.getUserId())) {
-			throw new RuntimeException("User with id "+authDTO.getUserId()+" already present");
+			throw new UserAlreadyExistException("User with id "+authDTO.getUserId()+" already present");
 		}
 		
 		 if(authRepository.existsByEmail(authDTO.getEmail())){
-			 throw new RuntimeException("Email Id Already Present");
+			 throw new UserAlreadyExistException("USer with Email Id: "+ authDTO.getEmail() +" already Exists");
 		 }
 		
 		Admin admin = authDTO.getAdmin();
@@ -150,6 +153,16 @@ public class AuthServiceImpl implements AuthService{
 	@Override
 	public JwtAuthResponse login(LoginDTO loginDTO) {
 		
+		Optional<Auth> authOptional = authRepository.findByUserIdOrEmail(loginDTO.getUserIdOrEmail(), loginDTO.getUserIdOrEmail());
+		
+		if(authOptional.isEmpty()) {
+			throw new UserNotFoundException(" User With Credential "+ loginDTO.getUserIdOrEmail() +" Not Found");
+		}
+		
+		if(authRepository.existsByEmail(loginDTO.getUserIdOrEmail())) {
+//			String userId = authRepository.findBy
+		}
+		
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 						loginDTO.getUserIdOrEmail(),
 						loginDTO.getPassword()
@@ -158,8 +171,6 @@ public class AuthServiceImpl implements AuthService{
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		String token = jwtTokenProvider.generateToken(authentication);
-		
-		Optional<Auth> authOptional = authRepository.findByUserIdOrEmail(loginDTO.getUserIdOrEmail(), loginDTO.getUserIdOrEmail());
 		
 		String role = "ROLE_MERCHANT";
 		
@@ -176,6 +187,36 @@ public class AuthServiceImpl implements AuthService{
 		jwtAuthResponse.setRole(role);
 		
 		return jwtAuthResponse;
+	}
+
+	@Override
+	public String deleteAuthData(String userId) {
+		Optional<Auth> authOptional = authRepository.findById(userId);
+		
+		if(authOptional.isEmpty()) {
+			throw new UserNotFoundException(" User With Credential "+ userId +" Not Found");
+		}
+		
+		String role = "ROLE_MERCHANT";
+		
+		Auth loggedInUser = authOptional.get();
+		
+		if(authOptional.isPresent()) {
+			
+			Boolean isAdmin = loggedInUser.getRoles().stream().anyMatch( r -> r.getName().equals("ROLE_ADMIN"));
+			
+			if(isAdmin) role = "ROLE_ADMIN";
+		}
+		
+		if(role == "ROLE_ADMIN") {
+			adminClient.deleteAdmin(userId);
+		}
+		else {
+			merchantClient.deleteMerchant(userId);
+		}
+		
+		authRepository.delete(loggedInUser);
+		return "User With Id: "+userId+" deleted successfully";
 	}
 
 	

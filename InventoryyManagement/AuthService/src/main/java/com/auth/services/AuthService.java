@@ -12,4 +12,6 @@ public interface AuthService {
 	
 	JwtAuthResponse login(LoginDTO loginDTO);
 	
+	String deleteAuthData(String userId);
+	
 }
