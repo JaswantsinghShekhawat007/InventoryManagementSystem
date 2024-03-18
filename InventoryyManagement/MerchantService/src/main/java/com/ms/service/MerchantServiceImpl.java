@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ms.dto.MerchantDTO;
+import com.ms.entity.Address;
 import com.ms.entity.Merchant;
 import com.ms.externalservice.ProductClient;
 import com.ms.repository.MerchantRepository;
@@ -64,19 +65,11 @@ public class MerchantServiceImpl implements MerchantService {
 	public List<Merchant> getAllUser() {
 		
 		List<Merchant> merchants = merchantRepository.findAll();
-		
-//		List<MerchantDTO> merchantDTOs = new ArrayList<>();
 
 		List<Merchant> newMerchants = merchants.stream().map( (merchant) -> {
 			merchant.setProducts(productClient.getProductsOfUser(merchant.getMerchantId()));
 			return merchant;
 		}).collect(Collectors.toList());
-		
-//		for(Merchant merchant: newMerchants) {
-//			MerchantDTO merchantDTO = new MerchantDTO();
-//			BeanUtils.copyProperties(merchant, merchantDTO);
-//			merchantDTOs.add(merchantDTO);
-//		}
 		
 		return newMerchants;
 	}
@@ -90,6 +83,33 @@ public class MerchantServiceImpl implements MerchantService {
 		merchant.setContactNo(merchantDTO.getContactNo());
 		merchant.setAddress(merchantDTO.getAddress());
 		
+	 	if (merchantDTO.getName() != null) {
+	 		
+	 		merchant.setName(merchantDTO.getName());
+        }
+	 	else {
+	 		String name = merchant.getName();
+	 		merchant.setName(name);
+	 	}
+	 	
+	 	if (merchantDTO.getContactNo() != null) {
+	 		
+	 		merchant.setContactNo(merchantDTO.getContactNo());
+        }
+	 	else {
+	 		String no = merchant.getContactNo();
+	 		merchant.setName(no);
+	 	}
+	 	
+	 	
+	 	if (merchantDTO.getAddress() != null) {
+	 		
+	 		merchant.setAddress(merchantDTO.getAddress());
+        }
+	 	else {
+	 		merchant.setAddress(merchant.getAddress());
+	 	}	
+	 	
 		merchantRepository.save(merchant);
 		
 		return merchantDTO;

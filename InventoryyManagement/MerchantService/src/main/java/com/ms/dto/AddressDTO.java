@@ -1,7 +1,7 @@
 package com.ms.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+//import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,9 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-	
-	private Integer id;
-	
+		
 	@NotEmpty(message = "Empty Field Door Number")
 	private String doorNo;
 	
@@ -28,8 +26,8 @@ public class AddressDTO {
 	@NotEmpty(message = "Empty Field State")
 	private String state;
 	
-	@NotNull
+	@NotEmpty
 	@Size(max=6, min=6,message = "Invalid Pincode")
-	private int pincode;	
+	private String pincode;	
 }
 

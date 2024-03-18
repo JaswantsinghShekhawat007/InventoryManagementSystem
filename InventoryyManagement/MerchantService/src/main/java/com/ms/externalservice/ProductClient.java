@@ -22,16 +22,15 @@ public interface ProductClient {
 	@GetMapping("/products/{merchantId}")
 	List<Product> getProductsOfUser(@PathVariable String merchantId);
 	
-//	@PostMapping("/add")
-//	ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO);
-	
 	@PostMapping("/add")
 	public Product addProduct(Product product);
-	
 	
 	@PutMapping("/update/{id}")
 	public Product updateProduct(@PathVariable String id, Product product);
 	
 	@DeleteMapping("/delete/{id}")
-	public void deleteRating(@PathVariable String id);
+	public void deleteProduct(@PathVariable String id);
+	
+	@DeleteMapping("/productsof/{merchantId}")
+	void deleteMerchantProduct(@PathVariable String merchantId);
 }

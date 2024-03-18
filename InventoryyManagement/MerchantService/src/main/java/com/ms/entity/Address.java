@@ -21,13 +21,13 @@ public class Address {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer addressId;
+	private Long addressId;
 	
 	private String doorNo;
 	private String area;
 	private String city;
 	private String state;
-	private int pincode;
+	private String pincode;
 	
 	@JsonIgnore
     @OneToOne(mappedBy = "address")
