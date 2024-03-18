@@ -11,4 +11,7 @@ import com.ps.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, String>{
 	
 	List<Product> findByMerchantId(String userId);
+	
+	void deleteAllByMerchantId(String merchantId);
+	
 }

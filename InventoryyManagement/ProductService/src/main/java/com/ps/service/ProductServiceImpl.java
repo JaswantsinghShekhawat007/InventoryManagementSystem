@@ -1,4 +1,4 @@
-package com.ps.service;
+	package com.ps.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,13 +90,46 @@ public class ProductServiceImpl implements ProductService {
 		Product product = productRepository.findById(id).orElseThrow(() ->
 		new RuntimeException("Product with " + id + " Not Found"));
 		
-		product.setName(productDTO.getName());
-		product.setPrice(productDTO.getPrice());
-		product.setDescription(productDTO.getDescription());
-		product.setDiscount(productDTO.getDiscount());
-		product.setQuantity(productDTO.getQuantity());
-		product.setTag(productDTO.getTag());
-		product.setUrls(productDTO.getUrls());
+	 	if (productDTO.getPrice() != null) {
+            product.setPrice(productDTO.getPrice());
+        }
+	 	else {
+	 		Double price = product.getPrice();
+	 		product.setPrice(price);
+	 	}
+	 	
+        if (productDTO.getDescription() != null) {
+            product.setDescription(productDTO.getDescription());
+        }
+        else {
+        	product.setDescription(product.getDescription());
+        }
+        
+        if (productDTO.getDiscount() != 0) {
+            product.setDiscount(productDTO.getDiscount());
+        }else {
+        	product.setDiscount(product.getDiscount());
+        }
+        
+        if (productDTO.getQuantity() != 0) {
+            product.setQuantity(productDTO.getQuantity());
+        }else {
+        	product.setQuantity(product.getQuantity());;
+        }
+        
+        if (productDTO.getTag() != null) {
+            product.setTag(productDTO.getTag());
+        }
+        else {
+        	product.setTag(product.getTag());
+        }
+        
+        if (!productDTO.getUrls().isEmpty()) {
+            product.setUrls(productDTO.getUrls());
+        }
+        else {
+        	product.setUrls(product.getUrls());;
+        }
 		
 		productRepository.save(product);
 		
@@ -123,6 +156,18 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> products = productRepository.findByMerchantId(merchantId);
 		
 		return products;
+	}
+
+	@Override
+	public String deleteMerchantProduct(String merchantId) {
+		
+		if(productRepository.findByMerchantId(merchantId).isEmpty()) {
+			return "No Products Owned By "+merchantId+" ."; 
+		}
+		
+		productRepository.deleteAllByMerchantId(merchantId);
+		
+		return "All Products Owned By MerchantId: "+merchantId+" deleted Successfully";
 	}
 
 	

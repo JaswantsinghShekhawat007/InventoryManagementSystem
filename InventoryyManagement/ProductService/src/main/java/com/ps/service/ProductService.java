@@ -17,5 +17,7 @@ public interface ProductService {
 	
 	ProductDTO deleteProduct(String id);
 	
+	String deleteMerchantProduct(String merchantId);
+	
 	List<Product> getProductsOfUser(String merchantId);
 }
