@@ -1,5 +1,6 @@
 package com.ads.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ads.dto.AdminDTO;
 import com.ads.entity.Admin;
+import com.ads.exception.AdminNotFoundException;
 import com.ads.repository.AdminRepository;
 
 @Service
@@ -33,26 +35,74 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public AdminDTO getAdminById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Admin admin = adminRepository.findById(id)
+						.orElseThrow( () -> new AdminNotFoundException("Admin With Id "+id+" Does Not Exist") ); 
+		
+		AdminDTO adminDTO = new AdminDTO();
+		
+		BeanUtils.copyProperties(admin, adminDTO);
+		
+		return adminDTO;
 	}
 
 	@Override
 	public List<AdminDTO> getAllAdmin() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Admin> admins = adminRepository.findAll();
+		
+		List<AdminDTO> adminDTOs = new ArrayList<>();
+		
+		for(Admin admin: admins) {
+			AdminDTO adminDTO = new AdminDTO();
+			BeanUtils.copyProperties(admin, adminDTO);
+			adminDTOs.add(adminDTO);
+		}
+		
+		return adminDTOs;
 	}
 
 	@Override
-	public AdminDTO updateAdmin(String id, AdminDTO AdminDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public AdminDTO updateAdmin(String id, AdminDTO adminDTO) {
+		Admin admin = adminRepository.findById(id)
+				.orElseThrow( () -> new AdminNotFoundException("Admin With Id "+id+" Does Not Exist") ); 
+
+		admin.setName(adminDTO.getName());
+		admin.setContactNo(adminDTO.getContactNo());
+		
+	 	if (adminDTO.getName() != null) {
+            admin.setName(adminDTO.getName());
+        }
+	 	else {
+	 		String name = admin.getName();
+	 		admin.setName(name);
+	 	}
+	 	
+	 	if (adminDTO.getContactNo() != null) {
+            admin.setContactNo(adminDTO.getContactNo());
+        }
+	 	else {
+	 		String no = admin.getContactNo();
+	 		admin.setContactNo(no);
+	 	}
+		
+		adminRepository.save(admin);
+		
+		return adminDTO;
 	}
 
 	@Override
 	public AdminDTO deleteAdmin(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		Admin admin = adminRepository.findById(id)
+				.orElseThrow( () -> new AdminNotFoundException("Admin With Id "+id+" Does Not Exist") ); 
+		
+		AdminDTO adminDTO = new AdminDTO();
+		
+		BeanUtils.copyProperties(admin, adminDTO);
+		
+		adminRepository.delete(admin);
+		
+		return adminDTO;
 	}
 
 }
