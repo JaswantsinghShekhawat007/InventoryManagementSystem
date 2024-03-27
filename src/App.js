@@ -1,24 +1,75 @@
-import logo from './logo.svg';
+  import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 
+import Home from './pages/home/home.component';
+import RegisterMerchant from './pages/register/register.component';
+import Login from './pages/login/login.component';
+import Navigation from './component/navigation/navigation.component';
+import RegisterAdmin from './pages/register/adminregister.component';
+import MerchantLanding from './pages/merchantLanding/merchantlanding.pages';
+import { isUserLoggedIn } from './services/AuthService';
+import AdminLanding from './pages/admin/adminlanding.page';
+import UpdateMerchant from './pages/merchantLanding/updatemerchant/updatemerchant';
+import Product from './pages/product/product';
+
 function App() {
+
+  const AuthenticatedRoute = ( { children } ) => {
+
+    const isLoggedIn = isUserLoggedIn();
+
+    if( isLoggedIn ) return children;
+    else return <Navigate to="/" />
+
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+
+        <Route path='/' element={<Navigation />}  >
+          
+
+        <Route index element={<Home />} />
+
+        {/* Auth Routes  */}
+        <Route path='register' element={ <RegisterMerchant /> } />
+
+        <Route path='register-admin' element={ 
+          <AuthenticatedRoute>
+            <RegisterAdmin /> 
+          </AuthenticatedRoute>
+          } />
+
+        <Route path='login' element={ <Login /> } />
+
+        {/* Merchant Routes */}
+        <Route path='merchant-home' element={ 
+          <AuthenticatedRoute>
+            <MerchantLanding /> 
+          </AuthenticatedRoute>
+          } >
+          </Route>
+          
+          <Route path='product-page' element={<Product />} />
+
+        <Route path='admin-home' element={ 
+          <AuthenticatedRoute>
+            <AdminLanding /> 
+          </AuthenticatedRoute>
+          } />
+
+        <Route path='update-merchant' element={ 
+          <AuthenticatedRoute>
+            <UpdateMerchant /> 
+          </AuthenticatedRoute>
+          } />
+
+        
+
+      </Route>
+
+
+    </Routes>
   );
 }
 
